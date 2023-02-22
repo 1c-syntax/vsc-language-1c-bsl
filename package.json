@@ -388,7 +388,7 @@
     "cross-env": "^7.0.3",
     "decache": "^4.6.1",
     "istanbul": "^0.4.5",
-    "mocha": "^8.2.1",
+    "mocha": "^10.2.0",
     "remap-istanbul": "^0.13.0",
     "should": "^13.2.3",
     "@snyk/protect": "^1.896.0",
