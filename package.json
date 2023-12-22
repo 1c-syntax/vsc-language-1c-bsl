@@ -117,13 +117,13 @@
         "command": "language-1c-bsl.languageServer.runTest",
         "title": "Run test",
         "category": "Language 1C (BSL)",
-        "enablement": "false"        
+        "enablement": "false"
       },
       {
         "command": "language-1c-bsl.languageServer.runAllTests",
         "title": "Run test",
         "category": "Language 1C (BSL)",
-        "enablement": "false"        
+        "enablement": "false"
       }
     ],
     "menus": {
@@ -324,12 +324,41 @@
       {
         "language": "bsl",
         "scopeName": "source.bsl",
-        "path": "./syntaxes/1c.tmLanguage"
+        "path": "./syntaxes/1c.tmLanguage.json"
       },
       {
         "language": "sdbl",
         "scopeName": "source.sdbl",
         "path": "./syntaxes/1c-query.tmLanguage"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "bsl",
+        "scopes": {
+          "property": [
+            "variable.other.property.bsl",
+            "variable.other.unknown.property.bsl"
+          ],
+          "property.readonly": [
+            "variable.other.constant.property.bsl"
+          ],
+          "variable": [
+            "variable.other.readwrite.bsl"
+          ],
+          "variable.readonly": [
+            "variable.other.constant.object.bsl"
+          ],
+          "function": [
+            "entity.name.function.bsl"
+          ],
+          "variable.defaultLibrary": [
+            "support.variable.bsl"
+          ],
+          "function.defaultLibrary": [
+            "support.function.bsl"
+          ]
+        }
       }
     ],
     "problemMatchers": [
@@ -371,6 +400,16 @@
       "[bsl]": {
         "editor.insertSpaces": false,
         "editor.tabSize": 4
+      },
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "support.function.bsl",
+            "settings": {
+              "fontStyle": "italic bold"
+            }
+          }
+        ]
       }
     }
   },
