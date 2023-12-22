@@ -502,7 +502,7 @@
                 {
                     "comment": "inline variable",
                     "name": "variable.other.readwrite.bsl, entity.name.variable.bsl",
-                    "match": "(?<!\\.\\s*)\\b([_$[:alpha:]][_$[:alnum:]]*)\\b(?=[\\s*\\[]?)(?!\\s*[\\(\\)])"
+                    "match": "(?<!\\.\\s*)\\b([_$[:alpha:]][_$[:alnum:]]*)\\b(?=[\\s*\\[]?)(?![\\(])"
                 }
             ]
         },
@@ -510,8 +510,23 @@
             "patterns": [
                 {
                     "comment": "inline function",
-                    "name": "entity.name.function.bsl",
-                    "match": "\\b([_$[:alpha:]][_$[:alnum:]]*)\\b(?=\\s*[\\(\\)])"
+                    "begin": "\\b([_$[:alpha:]][_$[:alnum:]]*)\\b\\s*(\\()\\s*",
+                    "beginCaptures": {
+                        "1": { "name": "entity.name.function.bsl" },
+                        "2": { "name": "punctuation.bracket.begin.bsl" }
+                    },
+                    "end": "\\s*(\\))",
+                    "endCaptures": {
+                        "1": { "name": "punctuation.bracket.end.bsl" }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#basic"
+                        },
+                        {
+                            "include": "#inblock-entities"
+                        }
+                    ]
                 }
             ]
         },
@@ -558,6 +573,9 @@
             "patterns": [
                 {
                     "include": "#basic"
+                },
+                {
+                    "include": "#inblock-entities"
                 }
             ]
         },
