@@ -357,7 +357,7 @@
     "istanbul": "^0.4.5",
     "remap-istanbul": "^0.13.0",
     "should": "^13.2.3",
-    "snyk": "^1.321.0",
+    "snyk": "^1.1294.2",
     "tslint": "^6.0.0",
     "tslint-sonarts": "^1.9.0",
     "typescript": "^3.7.5",
@@ -365,7 +365,7 @@
   },
   "dependencies": {
     "alignment": "0.0.1",
-    "cross-spawn": "^7.0.1",
+    "cross-spawn": "^7.0.6",
     "extract-zip": "^1.6.8",
     "fast-xml-parser": "3.15.1",
     "filequeue": "^0.5.0",
