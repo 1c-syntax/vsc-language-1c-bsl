@@ -365,24 +365,24 @@
   },
   "dependencies": {
     "alignment": "0.0.1",
-    "cross-spawn": "^7.0.1",
+    "cross-spawn": "^7.0.5",
     "extract-zip": "^1.6.8",
-    "fast-xml-parser": "3.15.1",
+    "fast-xml-parser": "4.2.4",
     "filequeue": "^0.5.0",
     "fs-extra": "^8.1.0",
-    "glob": "^7.1.6",
+    "glob": "^9.0.0",
     "iconv-lite": "^0.5.1",
     "json-date-parser": "^1.0.1",
     "lokijs": "^1.5.8",
     "onec-syntaxparser": "0.1.11",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "request-progress": "^3.0.0",
-    "request-promise-native": "^1.0.8",
-    "semver": "^7.1.1",
-    "vsce": "^1.75.0",
+    "request-promise-native": "^1.0.9",
+    "semver": "^7.5.2",
+    "vsce": "^2.15.0",
     "vscode-languageclient": "^6.1.0",
     "which": "^2.0.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.5.0"
   },
   "snyk": true
 }
