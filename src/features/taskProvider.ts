@@ -25,7 +25,6 @@ export default class TaskProvider {
 
     private provideBslScripts(): vscode.Task[] {
         const emptyTasks: vscode.Task[] = [];
-        const allTasks: vscode.Task[] = [];
         const folders = vscode.workspace.workspaceFolders;
 
         if (!folders) {
@@ -33,22 +32,17 @@ export default class TaskProvider {
         }
 
         try {
+            const allTasks: vscode.Task[] = [];
             for (const folder of folders) {
-                if (
-                    this.isEnabled(folder) &&
-                    folder ===
-                        vscode.workspace.getWorkspaceFolder(
-                            vscode.window.activeTextEditor.document.uri
-                        )
-                ) {
-                    allTasks.push(...this.fillDefaultTasks(folder.uri.fsPath));
-                    const tasks = this.provideBslScriptsForFolder(folder.uri.fsPath);
-                    allTasks.push(...tasks);
+                if (!this.isEnabled(folder)) {
+                    continue;
                 }
+                allTasks.push(...this.fillDefaultTasks(folder));
+                allTasks.push(...this.provideBslScriptsForFolder(folder));
             }
             return allTasks;
-        } catch (error) {
-            return error;
+        } catch (e) {
+            return emptyTasks;
         }
     }
 
@@ -59,12 +53,12 @@ export default class TaskProvider {
         );
     }
 
-    private fillDefaultTasks(workspaceRoot) {
+    private fillDefaultTasks(workspaceFolder: vscode.WorkspaceFolder) {
         const result: vscode.Task[] = [];
         result.push(
             this.createTask(
                 "OneScript: compile",
-                workspaceRoot,
+                workspaceFolder,
                 // tslint:disable-next-line:no-invalid-template-strings
                 "oscript",
                 ["-compile", "${file}"],
@@ -74,7 +68,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "OneScript: check",
-                workspaceRoot,
+                workspaceFolder,
                 // tslint:disable-next-line:no-invalid-template-strings
                 "oscript",
                 ["-check", "${file}"],
@@ -84,7 +78,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "OneScript: make",
-                workspaceRoot,
+                workspaceFolder,
                 // tslint:disable-next-line:no-invalid-template-strings
                 "oscript",
                 ["-make", "${file}", "${fileBasename}.exe"],
@@ -94,7 +88,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "OneScript: run",
-                workspaceRoot,
+                workspaceFolder,
                 // tslint:disable-next-line:no-invalid-template-strings
                 "oscript",
                 ["${file}"],
@@ -105,7 +99,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1testrunner: Testing project",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["1testrunner", "-runall", "${workspaceRoot}/tests"],
@@ -115,7 +109,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1testrunner: Testing current test-file",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["1testrunner", "-run", "${file}"],
@@ -127,7 +121,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "Opm: package build",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["opm", "build", "${workspaceRoot}"],
@@ -137,7 +131,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1bdd: Exec all features",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["1bdd", "${workspaceRoot}/features", "-out", "${workspaceRoot}/exec.log"],
@@ -148,7 +142,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1bdd: Exec feature",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["1bdd", "${file}", "-fail-fast", "-require", "${workspaceRoot}/features", "-out", "${workspaceRoot}/exec.log"],
@@ -160,7 +154,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1bdd: Exec feature for current step def",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 [
@@ -181,7 +175,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1bdd: Exec feature + debug",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 [
@@ -201,7 +195,7 @@ export default class TaskProvider {
         result.push(
             this.createTask(
                 "1bdd: Generate feature steps",
-                workspaceRoot,
+                workspaceFolder,
                 "cmd",
                 // tslint:disable-next-line:no-invalid-template-strings
                 ["1bdd", "gen", "${file}", "-out", "${workspaceRoot}/exec.log"],
@@ -213,7 +207,7 @@ export default class TaskProvider {
 
     private createTask(
         label: string,
-        workspaceRoot,
+        workspaceFolder: vscode.WorkspaceFolder,
         command,
         args?: string[],
         problemMatcher?: string[],
@@ -249,10 +243,10 @@ export default class TaskProvider {
 
         const task = new vscode.Task(
             kind,
-            vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri),
+            workspaceFolder,
             label,
             command,
-            new vscode.ProcessExecution(command, args, { cwd: workspaceRoot }),
+            new vscode.ProcessExecution(command, args, { cwd: workspaceFolder.uri.fsPath }),
             problemMatcher
         );
 
@@ -268,9 +262,9 @@ export default class TaskProvider {
         return task;
     }
 
-    private provideBslScriptsForFolder(workspaceRoot: string): vscode.Task[] {
+    private provideBslScriptsForFolder(workspaceFolder: vscode.WorkspaceFolder): vscode.Task[] {
         const emptyTasks: vscode.Task[] = [];
-        const tasksFolder = path.join(workspaceRoot, "tasks");
+        const tasksFolder = path.join(workspaceFolder.uri.fsPath, "tasks");
 
         if (!fs.existsSync(tasksFolder)) {
             return emptyTasks;
@@ -290,7 +284,7 @@ export default class TaskProvider {
                     this.createTask(
                         "Execute task: " + label,
                         // tslint:disable-next-line:no-invalid-template-strings
-                        workspaceRoot,
+                        workspaceFolder,
                         "cmd",
                         ["oscript", "${workspaceRoot}/tasks/" + label],
                         ["$OneScript Linter"],
