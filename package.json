@@ -3,7 +3,7 @@
   "displayName": "Language 1C (BSL)",
   "description": "Syntax highlighting for 1C:Enterprise 8.",
   "icon": "images/1c-syntax.png",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "publisher": "1c-syntax",
   "galleryBanner": {
     "color": "#0000FF",
