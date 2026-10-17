@@ -25,19 +25,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 //
-import extractZipWithCallback = require("extract-zip");
+import extractZip = require("extract-zip");
 import * as fs from "fs-extra";
 import { jsonDateParser } from "json-date-parser";
 import * as path from "path";
 import * as requestPromise from "request-promise-native";
 import * as semver from "semver";
-import { promisify } from "util";
 import BSLLanguageServerDownloadChannel from "./bsllsDownloadChannel";
 import { download } from "./downloadUtils";
 import { IGitHubReleasesAPIResponse } from "./githubApi";
 import { IStatus } from "./status";
-
-const extractZip = promisify(extractZipWithCallback);
 
 export interface IServerInfo {
     version: string;
