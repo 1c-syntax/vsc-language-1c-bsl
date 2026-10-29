@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.3
+
+* Исправлено зависание на этапе «Unpacking…» после скачивания BSL Language Server: распаковка завершалась, но сервер не запускался
+
 ## 2.1.2
 
 * Исправлено падение task provider без активного редактора (`a is not iterable` в Output → Tasks)
