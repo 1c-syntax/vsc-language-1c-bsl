@@ -987,8 +987,11 @@ async function withSpinningStatus(
 ) {
     const status = new StatusBarEntry(context, "$(sync~spin)");
     status.show();
-    await action(status);
-    status.dispose();
+    try {
+        await action(status);
+    } finally {
+        status.dispose();
+    }
 }
 
 function delay(milliseconds: number) {

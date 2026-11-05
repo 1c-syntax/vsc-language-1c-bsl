@@ -27,19 +27,20 @@
 //
 import * as fs from "fs";
 import * as request from "request";
+import { pipeline as pipelineWithCallback } from "stream";
+import { promisify } from "util";
 
 const requestProgress = require("request-progress");
+const pipeline = promisify(pipelineWithCallback);
 
 export function download(
     srcUrl: string,
     destPath: fs.PathLike,
     progress: (percent: number) => void
 ): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return pipeline(
         requestProgress(request.get(srcUrl))
-            .on("progress", state => progress(state.percent))
-            .on("complete", () => resolve())
-            .on("error", err => reject(err))
-            .pipe(fs.createWriteStream(destPath));
-    });
+            .on("progress", state => progress(state.percent)),
+        fs.createWriteStream(destPath)
+    );
 }

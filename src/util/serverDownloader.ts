@@ -209,21 +209,33 @@ export class ServerDownloader {
         version: string,
         status: IStatus
     ): Promise<void> {
-        if (!(await fs.pathExists(this.installDir))) {
-            await fs.promises.mkdir(this.installDir, { recursive: true });
+        if (!semver.valid(version)) {
+            throw new Error(`Invalid server version: ${version}`);
         }
 
-        const downloadDest = path.join(this.installDir, `${version}-download-${this.assetName}`);
-        status.update(`Downloading ${this.displayName} ${version}...`);
-        await download(downloadUrl, downloadDest, percent => {
-            status.update(
-                `Downloading ${this.displayName} ${version} :: ${(percent * 100).toFixed(2)} %`
-            );
-        });
+        const installDir = path.resolve(this.installDir);
+        const versionDir = path.join(installDir, version);
+        await fs.ensureDir(installDir);
+        const temporaryDir = await fs.promises.mkdtemp(path.join(installDir, ".install-"));
+        const downloadDest = path.join(temporaryDir, this.assetName);
+        const unpackDir = path.join(temporaryDir, "unpacked");
 
-        status.update(`Unpacking ${this.displayName} ${version}...`);
-        await extractZip(downloadDest, { dir: path.join(this.installDir, version) });
-        await fs.promises.unlink(downloadDest);
+        try {
+            status.update(`Downloading ${this.displayName} ${version}...`);
+            await download(downloadUrl, downloadDest, percent => {
+                status.update(
+                    `Downloading ${this.displayName} ${version} :: ${(percent * 100).toFixed(2)} %`
+                );
+            });
+
+            status.update(`Unpacking ${this.displayName} ${version}...`);
+            // A previous attempt may have left read-only files in the version directory.
+            // Extract into a fresh directory before replacing that incomplete installation.
+            await extractZip(downloadDest, { dir: unpackDir });
+            await fs.move(unpackDir, versionDir, { overwrite: true });
+        } finally {
+            await fs.remove(temporaryDir);
+        }
 
         status.update(`Initializing ${this.displayName}...`);
     }
