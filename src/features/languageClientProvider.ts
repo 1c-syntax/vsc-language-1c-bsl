@@ -104,6 +104,7 @@ export default class LanguageClientProvider {
             files
                 .filter(file => file !== "SERVER-INFO")    // todo: протекло
                 .filter(file => file !== installedVersion)
+                .filter(file => !file.startsWith(".install-"))
                 .map(file => Paths.join(langServerInstallDir, file))
                 .forEach(async file => {
                     try {
